@@ -140,7 +140,7 @@ class Director implements TemplateGlobalProvider {
 			Session::start();
 		}
 		// Initiate an empty session - doesn't initialize an actual PHP session until saved (see belwo)
-		$session = new Session(isset($_SESSION) ? $_SESSION : null);
+		$session = Injector::inst()->create('Session', isset($_SESSION) ? $_SESSION : array());
 
 		$output = Injector::inst()->get('RequestProcessor')->preRequest($req, $session, $model);
 		
@@ -229,7 +229,7 @@ class Director implements TemplateGlobalProvider {
 		
 		if(!$httpMethod) $httpMethod = ($postVars || is_array($postVars)) ? "POST" : "GET";
 		
-		if(!$session) $session = new Session(null);
+		if(!$session) $session = Injector::inst()->create('Session', array());
 
 		// Back up the current values of the superglobals
 		$existingRequestVars = isset($_REQUEST) ? $_REQUEST : array();
