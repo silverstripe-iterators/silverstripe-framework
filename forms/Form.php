@@ -1060,7 +1060,7 @@ class Form extends RequestHandler {
 
 	public static function messageForForm( $formName, $message, $type, $escapeHtml = true) {
 		Session::set(
-			"FormInfo.{$FormName}.formError.message", 
+			"FormInfo.{$formName}.formError.message", 
 			$escapeHtml ? Convert::raw2xml($message) : $message
 		);
 		Session::set("FormInfo.{$formName}.formError.type", $type);
