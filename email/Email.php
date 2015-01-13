@@ -4,17 +4,18 @@
  * @package framework
  * @subpackage email
  */
-
-if(isset($_SERVER['SERVER_NAME'])) {
-	/**
-	 * X-Mailer header value on emails sent
-	 */
-	define('X_MAILER', 'SilverStripe Mailer - version 2006.06.21 (Sent from "'.$_SERVER['SERVER_NAME'].'")');
-} else {
-	/**
-	 * @ignore
-	 */
-	define('X_MAILER', 'SilverStripe Mailer - version 2006.06.21');
+if(!defined('X_MAILER')) {
+	if(isset($_SERVER['SERVER_NAME'])) {
+		/**
+		 * X-Mailer header value on emails sent
+		 */
+		define('X_MAILER', 'SilverStripe Mailer - version 2006.06.21 (Sent from "'.$_SERVER['SERVER_NAME'].'")');
+	} else {
+		/**
+		 * @ignore
+		 */
+		define('X_MAILER', 'SilverStripe Mailer - version 2006.06.21');
+	}
 }
 
 /**
