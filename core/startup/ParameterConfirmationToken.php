@@ -98,10 +98,8 @@ class ParameterConfirmationToken {
 			$proto = 'https';
 		} else if(isset($_SERVER['SSL'])) {
 			$proto = 'https';
-		} else {
-			$proto = 'https';
 		}
-
+		
 		if((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')) $proto = 'https';
 		if(isset($_SERVER['SSL'])) $proto = 'https';
 
