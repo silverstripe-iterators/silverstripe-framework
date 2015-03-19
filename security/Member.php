@@ -163,6 +163,9 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	 */
 	private static $session_regenerate_id = true;
 
+	private static $_cached_current_member_id;
+	private static $_cached_current_member;
+
 	/**
 	 * @deprecated 3.2 Use the "Member.session_regenerate_id" config setting instead
 	 */
@@ -659,9 +662,26 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	public static function currentUser() {
 		$id = Member::currentUserID();
 
-		if($id) {
-			return Member::get()->byId($id);
+		if(!$id) {
+			return null;
 		}
+
+		if($id !== self::$_cached_current_member_id) {
+			self::$_cached_current_member = null;
+			self::$_cached_current_member_id = $id;
+		}
+		
+		if(is_null(self::$_cached_current_member)) {
+			$member = Member::get()->byId($id);
+
+			if($member) {
+				self::$_cached_current_member = $member;
+			} else {
+				self::$_cached_current_member = false;
+			}
+		}
+
+		return (self::$_cached_current_member) ? self::$_cached_current_member : null;
 	}
 	
 	/**
@@ -717,6 +737,9 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	 * Event handler called before writing to the database.
 	 */
 	public function onBeforeWrite() {
+		self::$_cached_current_member_id = null;
+		self::$_cached_current_member = null;
+
 		if($this->SetPassword) $this->Password = $this->SetPassword;
 
 		// If a member with the same "unique identifier" already exists with a different ID, don't allow merging.
