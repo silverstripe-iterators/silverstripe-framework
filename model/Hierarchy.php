@@ -310,18 +310,24 @@ class Hierarchy extends DataExtension {
 	}
 	
 	/**
-	 * Return CSS classes of 'unexpanded', 'closed', both, or neither, depending on
-	 * the marking of this DataObject.
+	 * Return CSS classes of 'unexpanded', 'closed', both, or neither, as well as a
+	 * 'jstree-*' state depending on the marking of this DataObject.
+	 * 
+	 * @return string
 	 */
-	public function markingClasses() {
+	public function markingClasses($numChildrenMethod="numChildren") {
 		$classes = '';
 		if(!$this->isExpanded()) {
-			$classes .= " unexpanded jstree-closed";
+			$classes .= " unexpanded";
 		}
-		if($this->isTreeOpened()) {
-			if($this->numChildren() > 0) $classes .= " jstree-open";
+		
+		// Set jstree open state, or mark it as a leaf (closed) if there are no children
+		if(!$this->owner->$numChildrenMethod()) {
+			$classes .= " jstree-leaf closed";
+		} elseif($this->isTreeOpened()) {
+			$classes .= " jstree-open";
 		} else {
-			$classes .= " closed";
+			$classes .= " jstree-closed closed";
 		}
 		return $classes;
 	}
