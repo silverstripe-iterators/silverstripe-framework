@@ -2572,11 +2572,15 @@ class DataObject extends ViewableData implements DataObjectInterface, i18nEntity
 	 *
 	 * @return boolean|null
 	 */
-	public function extendedCan($methodName, $member /*, polymorphic */) {
+	public function extendedCan($methodName, $member = null /*, polymorphic */) {
 		$args = func_get_args();
 
+		if(array_key_exists(1, $args)) {
+			unset($args[1]);
+		}
+
 		$results = call_user_func_array(array(
-			$this, 'extend'), func_get_args()
+			$this, 'extend'), $args
 		);
 
 		if($results && is_array($results)) {
