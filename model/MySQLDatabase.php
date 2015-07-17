@@ -719,6 +719,14 @@ class MySQLDatabase extends SS_Database {
 		return 'int(11) not null default ' . (int)$values['default'];
 	}
 
+	public function bigint($values){
+		//For reference, this is what typically gets passed to this function:
+		//$parts=Array('datatype'=>'bigint', 'precision'=>20, 'null'=>'not null', 'default'=>(bigint)$this->default);
+		//DB::requireField($this->tableName, $this->name, "bigint(20) not null default '{$this->defaultVal}'");
+
+		return 'bigint(20) not null default ' . (int)$values['default'];
+	}
+
 	/**
 	 * Return a datetime type-formatted string
 	 * For MySQL, we simply return the word 'datetime', no other parameters are necessary
