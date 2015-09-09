@@ -127,6 +127,8 @@ class MySQLDatabase extends SS_Database {
 		return "mysql";
 	}
 
+	private static $count = 1;
+
 	public function query($sql, $errorLevel = E_USER_ERROR) {
 		if(isset($_REQUEST['previewwrite']) && in_array(strtolower(substr($sql,0,strpos($sql,' '))),
 				array('insert','update','delete','replace'))) {
@@ -143,7 +145,9 @@ class MySQLDatabase extends SS_Database {
 
 		if(isset($_REQUEST['showqueries']) && Director::isDev(true)) {
 			$endtime = round(microtime(true) - $starttime,4);
-			Debug::message("\n$sql\n{$endtime}ms\n", false);
+			$count = self::$count;
+			Debug::message("Query: $count: \n$sql\n{$endtime}ms\n", false);
+			self::$count++;
 		}
 
 		if(!$handle && $errorLevel) {
