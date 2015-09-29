@@ -388,8 +388,9 @@ class Member extends DataObject implements TemplateGlobalProvider {
 		$this->extend('beforeMemberLoggedIn');
 
 		self::session_regenerate_id();
-
 		Session::set("loggedInAs", $this->ID);
+		self::$_cached_current_member_id = $this->ID;
+
 		// This lets apache rules detect whether the user has logged in
 		if(Member::config()->login_marker_cookie) Cookie::set(Member::config()->login_marker_cookie, 1, 0);
 
@@ -495,6 +496,8 @@ class Member extends DataObject implements TemplateGlobalProvider {
 		$this->extend('beforeMemberLoggedOut');
 
 		Session::clear("loggedInAs");
+		self::$_cached_current_member_id = null;
+
 		if(Member::config()->login_marker_cookie) Cookie::set(Member::config()->login_marker_cookie, null, 0);
 
 		Session::destroy();
@@ -665,13 +668,8 @@ class Member extends DataObject implements TemplateGlobalProvider {
 		if(!$id) {
 			return null;
 		}
-
-		if($id !== self::$_cached_current_member_id) {
-			self::$_cached_current_member = null;
-			self::$_cached_current_member_id = $id;
-		}
 		
-		if(is_null(self::$_cached_current_member)) {
+		if(is_null(self::$_cached_current_member) || $id !== self::$_cached_current_member->ID) {
 			$member = Member::get()->byId($id);
 
 			if($member) {
@@ -697,14 +695,26 @@ class Member extends DataObject implements TemplateGlobalProvider {
 	 * @return int Returns the ID of the current logged in user or 0.
 	 */
 	public static function currentUserID() {
-		$id = Session::get("loggedInAs");
+		if(self::$_cached_current_member_id !== null) {
+			$id = self::$_cached_current_member_id;
+		} else {
+			$id = Session::get("loggedInAs");
+			self::$_cached_current_member_id = $id;
+		}
+
 		if(!$id && !self::$_already_tried_to_auto_log_in) {
 			self::autoLogin();
 			$id = Session::get("loggedInAs");
+			self::$_cached_current_member_id = $id;
 		}
 
-		return is_numeric($id) ? $id : 0;
+		if(self::$_cached_current_member_id === null || !is_numeric(self::$_cached_current_member_id)) {
+			self::$_cached_current_member_id = 0;
+		}
+
+		return self::$_cached_current_member_id;
 	}
+
 	private static $_already_tried_to_auto_log_in = false;
 
 
