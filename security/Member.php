@@ -669,7 +669,7 @@ class Member extends DataObject implements TemplateGlobalProvider {
 			return null;
 		}
 		
-		if(is_null(self::$_cached_current_member) || $id !== self::$_cached_current_member->ID) {
+		if(is_null(self::$_cached_current_member) || (self::$_cached_current_member && $id !== self::$_cached_current_member->ID)) {
 			$member = Member::get()->byId($id);
 
 			if($member) {
