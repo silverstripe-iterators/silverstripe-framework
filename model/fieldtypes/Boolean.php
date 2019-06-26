@@ -67,6 +67,7 @@ class Boolean extends DBField {
 	 * If necessary, this should include quotes.
 	 */
 	public function prepValueForDB($value) {
+		if(!is_scalar($value)) { return "'0'"; }
 		if(strpos($value, '[')!==false)
 			return Convert::raw2sql($value);
 		else {

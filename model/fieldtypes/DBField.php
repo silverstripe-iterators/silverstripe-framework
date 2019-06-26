@@ -138,7 +138,7 @@ abstract class DBField extends ViewableData {
 	 * @return string The encoded value
 	 */
 	public function prepValueForDB($value) {
-		if($value === null || $value === "" || $value === false) {
+		if($value === null || $value === "" || $value === false || !is_scalar($value)) {
 			return "null";
 		} else {
 			return DB::getConn()->prepStringForDB($value);

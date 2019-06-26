@@ -95,6 +95,7 @@ class Decimal extends DBField {
 	 * @return mixed
 	 */
 	public function prepValueForDB($value) {
+		if(!is_scalar($value)) { return "0"; }
 		if($value === true) {
 			return 1;
 		} if(!$value || !is_numeric($value)) {
